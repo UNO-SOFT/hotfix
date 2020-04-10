@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"hotfix/actions"
+	"github.com/UNO-SOFT/hotfix/actions"
 )
 
 // main is the starting point for your Buffalo application.

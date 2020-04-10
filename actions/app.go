@@ -7,7 +7,7 @@ import (
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
 	"github.com/unrolled/secure"
 
-	"hotfix/models"
+	"github.com/UNO-SOFT/hotfix/models"
 
 	"github.com/gobuffalo/buffalo-pop/v2/pop/popmw"
 	csrf "github.com/gobuffalo/mw-csrf"
@@ -73,7 +73,7 @@ func App() *buffalo.App {
 // for more information: https://gobuffalo.io/en/docs/localization
 func translations() buffalo.MiddlewareFunc {
 	var err error
-	if T, err = i18n.New(packr.New("app:locales", "../locales"), "en-US"); err != nil {
+	if T, err = i18n.New(packr.New("app:locales", "../locales"), "hu-HU"); err != nil {
 		app.Stop(err)
 	}
 	return T.Middleware()

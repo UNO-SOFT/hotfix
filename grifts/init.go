@@ -1,7 +1,7 @@
 package grifts
 
 import (
-	"hotfix/actions"
+	"github.com/UNO-SOFT/hotfix/actions"
 
 	"github.com/gobuffalo/buffalo"
 )
