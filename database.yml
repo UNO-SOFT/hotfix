@@ -1,0 +1,12 @@
+---
+development:
+  dialect: "sqlite3"
+  database: /home/tgulacsi/src/github.com/UNO-SOFT/hotfix_hotfix_development.sqlite
+
+test:
+  dialect: "sqlite3"
+  database: /home/tgulacsi/src/github.com/UNO-SOFT/hotfix_hotfix_test.sqlite
+
+production:
+  dialect: "sqlite3"
+  database: /home/tgulacsi/src/github.com/UNO-SOFT/hotfix_hotfix_production.sqlite
