@@ -1,0 +1,1 @@
+ALTER TABLE "events" ADD COLUMN "where" TEXT NOT NULL DEFAULT '';

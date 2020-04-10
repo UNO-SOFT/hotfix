@@ -2,6 +2,11 @@
 
 Thank you for choosing Buffalo for your web development needs.
 
+## Help
+
+See https://mycodesmells.com/post/business-card-in-go-buffalo---part-3---database.
+
+
 ## Database Setup
 
 It looks like you chose to set up your application using a database! Fantastic!

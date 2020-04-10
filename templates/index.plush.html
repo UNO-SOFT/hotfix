@@ -16,6 +16,48 @@
   <div class="col-md-12">
     <div class="subtitle">
       <div class="container">
+        <h3>Events</h3>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr text-align="left">
+            <th>WITH</th>
+            <th>WHAT</th>
+			<th>WHERE</th>
+            <th>WHEN</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <%= for (e) in events { %>
+            <tr>
+              <td class="centered">
+                <%= e.With %>
+              </td>
+              <td>
+				<%= e.What %>
+              </td>
+              <td>
+				<%= e.Where %>
+              </td>
+              <td>
+				<%= e.When.Format(time.RFC3339) %>
+              </td>
+            </tr>
+          <% } %>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="subtitle">
+      <div class="container">
         <h3>Defined Routes</h3>
       </div>
     </div>
