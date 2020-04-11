@@ -16,34 +16,36 @@
   <div class="col-md-12">
     <div class="subtitle">
       <div class="container">
-        <h3>Events</h3>
+        <h3>Fixes</h3>
       </div>
     </div>
     <div class="table-responsive">
       <table class="table table-striped">
         <thead>
           <tr text-align="left">
-            <th>WITH</th>
-            <th>WHAT</th>
+            <th>NAME</th>
+			<th>STATE</th>
 			<th>WHERE</th>
-            <th>WHEN</th>
+            <th>ALLOW</th>
           </tr>
         </thead>
         <tbody>
 
-          <%= for (e) in events { %>
+          <%= for (f) in fixes { %>
             <tr>
               <td class="centered">
-                <%= e.With %>
+				  <a href="fixes/<%= f.Name %>"><%= f.Name %></a>
+              </td>
+			  <td>
+				  <%= f.State %>
+			  </td>
+              <td>
+				<%= join(f.Where, ",") %>
               </td>
               <td>
-				<%= e.What %>
-              </td>
-              <td>
-				<%= e.Where %>
-              </td>
-              <td>
-				<%= e.When.Format(time.RFC3339) %>
+			  <%= for (t) in f.Todo { %>
+			    <a href="fixes/<%= f.Name %>/<%= t %>"><%= t %></a>
+			  <% } %>
               </td>
             </tr>
           <% } %>

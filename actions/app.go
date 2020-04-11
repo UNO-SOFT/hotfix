@@ -59,6 +59,8 @@ func App() *buffalo.App {
 		// Setup and use translations:
 		app.Use(translations())
 
+		app.GET("/events/", EventsHandler)
+		app.GET("/fixes/{with}/{what}", FixHandler)
 		app.GET("/", HomeHandler)
 
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
