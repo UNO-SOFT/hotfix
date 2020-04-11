@@ -10,3 +10,17 @@ CREATE TABLE IF NOT EXISTS "events" (
 "created_at" DATETIME NOT NULL,
 "updated_at" DATETIME NOT NULL
 , "f_where" TEXT NOT NULL DEFAULT '');
+CREATE TABLE IF NOT EXISTS "votes" (
+"id" TEXT PRIMARY KEY,
+"author" TEXT NOT NULL,
+"vote" smallint NOT NULL,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL
+, name TEXT NOT NULL DEFAULT '');
+CREATE TABLE IF NOT EXISTS "users" (
+"id" TEXT PRIMARY KEY,
+"email" TEXT NOT NULL,
+"password_hash" TEXT NOT NULL,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL
+);

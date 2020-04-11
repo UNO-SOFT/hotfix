@@ -1,0 +1,6 @@
+create_table("votes") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("author", "text", {})
+	t.Column("vote", "smallint", {})
+	t.Timestamps()
+}

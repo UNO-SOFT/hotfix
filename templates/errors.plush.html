@@ -1,0 +1,49 @@
+<header>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9 col-sm-9 col-xs-10 titles">
+        <h1><%= t("welcome_greeting") %></h1>
+        <h2>
+          <a href="https://github.com/gobuffalo/buffalo"><i class="fab fa-github" aria-hidden="true"></i> https://www.unosoft.hu/hotfix/</a>
+        </h2>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="subtitle">
+      <div class="container">
+        <h3>Errors</h3>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr text-align="left">
+            <th>ERROR</th>
+			<th>MESSAGE</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <%= for (k) in errors.Keys() { %>
+            <tr>
+              <td>
+				 <% k %>
+              </td>
+			  <td>
+				  <%= errors.Get(k) %>
+            </tr>
+          <% } %>
+
+        </tbody>
+      </table>
+    </div>
+	<a href="/">Go back</a>
+  </div>
+</div>
+
+<div class="foot"> <span> Powered by <a href="http://gobuffalo.io/">gobuffalo.io</a></span> </div>

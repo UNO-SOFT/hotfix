@@ -31,20 +31,23 @@
         </thead>
         <tbody>
 
-          <%= for (f) in fixes { %>
+          <%= for (fx) in fixes { %>
             <tr>
               <td class="centered">
-				  <a href="fixes/<%= f.Name %>"><%= f.Name %></a>
+				  <a href="events/?with=<%= fx.Name %>"><%= fx.Name %></a>
               </td>
 			  <td>
-				  <%= f.State %>
+				  <%= fx.State %>
 			  </td>
               <td>
-				<%= join(f.Where, ",") %>
+				<%= join(fx.Where, ",") %>
               </td>
               <td>
-			  <%= for (t) in f.Todo { %>
-			    <a href="fixes/<%= f.Name %>/<%= t %>"><%= t %></a>
+			  <%= if (len(fx.Todo) != 0) { %>
+				<%= form({action: fixPath({name: fx.Name}), method: "PUT"}) { %>
+				<%= f.SelectTag({name: "vote", options: fx.Todo, value: "+1"}) %>
+				<input type="submit" value="Vote" />
+			    <% } %>
 			  <% } %>
               </td>
             </tr>

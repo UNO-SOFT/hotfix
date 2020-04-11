@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/gobuffalo/pop/v5"
@@ -40,6 +41,19 @@ func (fs FixState) String() string {
 		return "Allowed"
 	default:
 		return "Unknown"
+	}
+}
+
+func ParseFixState(s string) (FixState, error) {
+	fs, err := strconv.Atoi(s)
+	if err != nil {
+		return FixUnknown, err
+	}
+	switch fs := FixState(fs); fs {
+	case FixBanned, FixNOK, FixOK, FixAllowed:
+		return fs, nil
+	default:
+		return FixUnknown, nil
 	}
 }
 
