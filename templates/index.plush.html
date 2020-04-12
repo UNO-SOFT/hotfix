@@ -10,6 +10,16 @@
     </div>
   </div>
 
+<div class="auth-center">
+  <%= if (current_user) { %>
+    <h1><%= current_user.Email %></h1>
+    <%= linkTo(authPath(), {data-method: "DELETE"}){ %>Sign Out<% } %>
+  <% } else { %>
+    <%= linkTo(newAuthPath()){ %>Sign In<% } %>
+    <%= linkTo(newUsersPath()){ %>Register<% } %>
+  <% } %>
+</div>
+
 </header>
 
 <div class="row">
@@ -43,9 +53,14 @@
 				<%= join(fx.Where, ",") %>
               </td>
               <td>
-			  <%= if (len(fx.Todo) != 0) { %>
+			  <%= if ((len(fx.Todo) != 0) && (current_user)) { %>
 				<%= form({action: fixPath({name: fx.Name}), method: "PUT"}) { %>
-				<%= f.SelectTag({name: "vote", options: fx.Todo, value: "+1"}) %>
+				<input type="hidden" name="name" value="<%= fx.Name %>" />
+				<input type="hidden" name="author" value="<%= current_user.Email %>" />
+				<%= for (v) in fx.Todo { %>
+				  <input type="radio" name="vote" id="<%= v %>" value="<%= v.Value() %>"/>
+				  <label for="<%= v %>"><%= t(v.String()) %></label>
+				<% } %>
 				<input type="submit" value="Vote" />
 			    <% } %>
 			  <% } %>

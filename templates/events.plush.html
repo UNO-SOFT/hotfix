@@ -53,5 +53,42 @@
     </div>
   </div>
 </div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="subtitle">
+      <div class="container">
+        <h3>Votes</h3>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr text-align="left">
+            <th>WHO</th>
+            <th>WHAT</th>
+            <th>WHEN</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <%= for (v) in votes { %>
+            <tr>
+              <td class="centered">
+                <%= v.Author %>
+              </td>
+              <td>
+				<%= v.Vote %>
+              </td>
+              <td>
+				<%= v.CreatedAt.Format("2006-01-02T15:04:05Z07:00") %>
+              </td>
+            </tr>
+          <% } %>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 <div class="foot"> <span> Powered by <a href="http://gobuffalo.io/">gobuffalo.io</a></span> </div>

@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -17,7 +18,8 @@ type Fix struct {
 	Events               []Event
 	Deployed             bool
 	State                FixState
-	Todo                 []string
+	Votes                []Vote
+	Todo                 []FixState
 }
 type FixState int8
 
@@ -28,6 +30,10 @@ const (
 	FixNOK     = FixState(-1)
 	FixBanned  = FixState(-2)
 )
+
+func (fs FixState) Value() string {
+	return fmt.Sprintf("%+d", fs)
+}
 
 func (fs FixState) String() string {
 	switch fs {
@@ -72,16 +78,33 @@ func GetFixes(tx *pop.Connection) ([]Fix, error) {
 	var f Fix
 	var fixes []Fix
 	where := make(map[string]time.Time)
-	A := func(f Fix) {
+	A := func(f Fix) error {
 		if f.Name != "" {
 			f.Where = make([]string, 0, len(where))
 			for k := range where {
 				f.Where = append(f.Where, k)
 			}
-			if !f.Deployed && f.State != FixBanned {
-				f.Todo = append(f.Todo, "-2")
-				if f.State != FixAllowed {
-					f.Todo = append(f.Todo, "-1", "+1", "+2")
+			if !f.Deployed {
+				if err := tx.Order("created_at").Where("name = ?", f.Name).All(&f.Votes); err != nil {
+					return err
+				}
+				for _, v := range f.Votes {
+					if v.Vote == FixBanned {
+						f.State = FixBanned
+						break
+					}
+					if v.Vote == FixAllowed {
+						f.State = FixAllowed
+					} else if v.Vote != FixUnknown && f.State != FixBanned && f.State != FixAllowed {
+						f.State = v.Vote
+					}
+				}
+
+				if f.State != FixBanned {
+					if f.State != FixAllowed {
+						f.Todo = append(f.Todo, (FixAllowed), (FixOK), (FixNOK))
+					}
+					f.Todo = append(f.Todo, (FixBanned))
 				}
 			}
 			fixes = append(fixes, f)
@@ -89,10 +112,13 @@ func GetFixes(tx *pop.Connection) ([]Fix, error) {
 		for k := range where {
 			delete(where, k)
 		}
+		return nil
 	}
 	for _, e := range events {
 		if f.Name != e.With {
-			A(f)
+			if err := A(f); err != nil {
+				return fixes, err
+			}
 			f = Fix{Name: e.With, CreatedAt: e.When}
 		}
 		where[e.Where] = e.When
@@ -119,6 +145,6 @@ func GetFixes(tx *pop.Connection) ([]Fix, error) {
 			}
 		}
 	}
-	A(f)
-	return fixes, nil
+	err := A(f)
+	return fixes, err
 }

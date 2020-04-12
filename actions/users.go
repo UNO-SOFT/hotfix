@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"log"
+
 	"github.com/UNO-SOFT/hotfix/models"
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v5"
@@ -22,7 +24,8 @@ func UsersCreate(c buffalo.Context) error {
 	}
 
 	tx := c.Value("tx").(*pop.Connection)
-	verrs, err := tx.ValidateAndCreate(u)
+	verrs, err := u.Create(tx)
+	log.Printf("USER: %+v verrs: %+v err: %+v", u, verrs, err)
 	if err != nil {
 		return errors.WithStack(err)
 	}

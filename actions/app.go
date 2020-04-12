@@ -66,6 +66,7 @@ func App() *buffalo.App {
 		//AuthMiddlewares
 		app.Use(SetCurrentUser)
 		app.Use(Authorize)
+		app.Middleware.Skip(Authorize, HomeHandler)
 
 		//Routes for Auth
 		auth := app.Group("/auth")
@@ -73,7 +74,7 @@ func App() *buffalo.App {
 		auth.GET("/new", AuthNew)
 		auth.POST("/", AuthCreate)
 		auth.DELETE("/", AuthDestroy)
-		auth.Middleware.Skip(Authorize, HomeHandler, AuthLanding, AuthNew, AuthCreate)
+		auth.Middleware.Skip(Authorize, AuthLanding, AuthNew, AuthCreate)
 
 		//Routes for User registration
 		users := app.Group("/users")

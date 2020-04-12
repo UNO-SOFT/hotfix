@@ -14,21 +14,17 @@ import (
 // the events page.
 func FixHandler(c buffalo.Context) error {
 	db := c.Value("tx").(*pop.Connection)
-	vote, err := models.ParseFixState(c.Param("vote"))
-	if err != nil {
+	now := time.Now()
+	v := models.Vote{CreatedAt: now, UpdatedAt: now}
+	if err := c.Bind(&v); err != nil {
 		return err
 	}
-	now := time.Now()
-	v := models.Vote{
-		Name: c.Param("name"), Vote: vote,
-		CreatedAt: now, UpdatedAt: now,
-		Author: c.Param("author")}
 	if verrs, err := db.ValidateAndCreate(&v); err != nil {
 		return fmt.Errorf("validate(%+v): %w", v, err)
 	} else if verrs.HasAny() {
 		c.Set("errors", verrs)
 		return c.Render(422, r.HTML("errors.html"))
 	}
-	c.Flash().Add("success", fmt.Sprintf("%s: %s", v.Name, vote))
+	c.Flash().Add("success", fmt.Sprintf("%s: %s", v.Name, v.Vote))
 	return c.Redirect(302, "/")
 }
