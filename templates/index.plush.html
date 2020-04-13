@@ -13,10 +13,10 @@
 <div class="auth-center">
   <%= if (current_user) { %>
     <h1><%= current_user.Email %></h1>
-    <%= linkTo(authPath(), {data-method: "DELETE"}){ %>Sign Out<% } %>
+	<%= linkTo(authPath(), {data-method: "DELETE"}){ %><%= t("sign_out") %><% } %>
   <% } else { %>
-    <%= linkTo(newAuthPath()){ %>Sign In<% } %>
-    <%= linkTo(newUsersPath()){ %>Register<% } %>
+  <%= linkTo(newAuthPath()){ %><%= t("sign_in") %><% } %>
+  <%= linkTo(newUsersPath()){ %><%= t("register") %><% } %>
   <% } %>
 </div>
 
@@ -59,7 +59,7 @@
 				<input type="hidden" name="author" value="<%= current_user.Email %>" />
 				<%= for (v) in fx.Todo { %>
 				  <input type="radio" name="vote" id="<%= v %>" value="<%= v.Value() %>"/>
-				  <label for="<%= v %>"><%= t(v.String()) %></label>
+				  <label for="<%= v.Value() %>"><%= t(v.String()) %></label>
 				<% } %>
 				<input type="submit" value="Vote" />
 			    <% } %>
@@ -74,6 +74,7 @@
   </div>
 </div>
 
+<% if (ENV != "production") {  %>
 <div class="row">
   <div class="col-md-12">
     <div class="subtitle">
@@ -117,4 +118,6 @@
     </div>
   </div>
 </div>
+<% } %>
+
 <div class="foot"> <span> Powered by <a href="http://gobuffalo.io/">gobuffalo.io</a></span> </div>

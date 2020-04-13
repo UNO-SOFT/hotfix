@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"os"
+	"strings"
 
 	"github.com/UNO-SOFT/hotfix/actions"
 )
@@ -13,10 +15,20 @@ import (
 // call `app.Serve()`, unless you don't want to start your
 // application that is. :)
 func main() {
-	app := actions.App()
-	if err := app.Serve(); err != nil {
+	if err := Main(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func Main() error {
+	for _, key := range strings.Split(os.Getenv("ALLOWED_PUBKEYS"), ";") {
+		actions.AllowedPubkeys = append(actions.AllowedPubkeys, key)
+	}
+	if err := actions.ParseAllowedPubkeys(); err != nil {
+		return err
+	}
+	app := actions.App()
+	return app.Serve()
 }
 
 /*

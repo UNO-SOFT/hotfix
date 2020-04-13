@@ -35,55 +35,58 @@ var T *i18n.Translator
 // placed last in the route declarations, as it will prevent routes
 // declared after it to never be called.
 func App() *buffalo.App {
-	if app == nil {
-		app = buffalo.New(buffalo.Options{
-			Env:         ENV,
-			SessionName: "_hotfix_session",
-		})
-
-		// Automatically redirect to SSL
-		app.Use(forceSSL())
-
-		// Log request parameters (filters apply).
-		app.Use(paramlogger.ParameterLogger)
-
-		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
-		// Remove to disable this.
-		app.Use(csrf.New)
-
-		// Wraps each request in a transaction.
-		//  c.Value("tx").(*pop.Connection)
-		// Remove to disable this.
-		app.Use(popmw.Transaction(models.DB))
-
-		// Setup and use translations:
-		app.Use(translations())
-
-		app.GET("/events/", EventsHandler)
-		app.PUT("/fixes/{name}", FixHandler)
-		app.GET("/", HomeHandler)
-
-		//AuthMiddlewares
-		app.Use(SetCurrentUser)
-		app.Use(Authorize)
-		app.Middleware.Skip(Authorize, HomeHandler)
-
-		//Routes for Auth
-		auth := app.Group("/auth")
-		auth.GET("/", AuthLanding)
-		auth.GET("/new", AuthNew)
-		auth.POST("/", AuthCreate)
-		auth.DELETE("/", AuthDestroy)
-		auth.Middleware.Skip(Authorize, AuthLanding, AuthNew, AuthCreate)
-
-		//Routes for User registration
-		users := app.Group("/users")
-		users.GET("/new", UsersNew)
-		users.POST("/", UsersCreate)
-		users.Middleware.Remove(Authorize)
-
-		app.ServeFiles("/", assetsBox) // serve files from the public directory
+	if app != nil {
+		return app
 	}
+
+	app = buffalo.New(buffalo.Options{
+		Env:         ENV,
+		SessionName: "_hotfix_session",
+	})
+
+	// Automatically redirect to SSL
+	app.Use(forceSSL())
+
+	// Log request parameters (filters apply).
+	app.Use(paramlogger.ParameterLogger)
+
+	// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
+	// Remove to disable this.
+	app.Use(csrf.New)
+
+	// Wraps each request in a transaction.
+	//  c.Value("tx").(*pop.Connection)
+	// Remove to disable this.
+	app.Use(popmw.Transaction(models.DB))
+
+	// Setup and use translations:
+	app.Use(translations())
+
+	app.GET("/events/", EventsHandler)
+	app.PUT("/events/", PutEventHandler)
+	app.PUT("/fixes/{name}", FixHandler)
+	app.GET("/", HomeHandler)
+
+	//AuthMiddlewares
+	app.Use(SetCurrentUser)
+	app.Use(Authorize)
+	app.Middleware.Skip(Authorize, HomeHandler, PutEventHandler)
+
+	//Routes for Auth
+	auth := app.Group("/auth")
+	auth.GET("/", AuthLanding)
+	auth.GET("/new", AuthNew)
+	auth.POST("/", AuthCreate)
+	auth.DELETE("/", AuthDestroy)
+	auth.Middleware.Skip(Authorize, AuthLanding, AuthNew, AuthCreate)
+
+	//Routes for User registration
+	users := app.Group("/users")
+	users.GET("/new", UsersNew)
+	users.POST("/", UsersCreate)
+	users.Middleware.Remove(Authorize)
+
+	app.ServeFiles("/", assetsBox) // serve files from the public directory
 
 	return app
 }

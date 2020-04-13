@@ -1,3 +1,9 @@
 # For more information on using i18n see: https://github.com/nicksnyder/go-i18n
 - id: welcome_greeting
   translation: "Üdvözöl a HotFix (HU)"
+- id: sign_in
+  translation: "Bejelentkezés"
+- id: sign_out
+  translation: "Kijelentkezés"
+- id: register
+  translation: "Regisztráció"
