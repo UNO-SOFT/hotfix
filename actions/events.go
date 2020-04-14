@@ -10,19 +10,24 @@ import (
 	"github.com/gobuffalo/pop/v5"
 
 	"github.com/UNO-SOFT/hotfix/models"
+
+	"github.com/UNO-SOFT/signify-nacl"
 )
+
+const NaCLPublicPrefix = signify.NaCLPublicPrefix
+const NaCLPrivatePrefix = signify.NaCLPrivatePrefix
 
 var AllowedPubkeys = []string{
 	NaCLPublicPrefix + `rmWa1cGJb38fTh/JFAVMP1H5G2f2jIk1qKG0kxxryEU=`,
 }
 
 var identitiesMu sync.Mutex
-var identities map[[32]byte]struct{}
+var identities map[signify.PublicKey]struct{}
 
 func ParseAllowedPubkeys() error {
 	identitiesMu.Lock()
 	if identities == nil {
-		identities = make(map[[32]byte]struct{}, len(AllowedPubkeys))
+		identities = make(map[signify.PublicKey]struct{}, len(AllowedPubkeys))
 	} else {
 		for k := range identities {
 			delete(identities, k)
@@ -33,42 +38,36 @@ func ParseAllowedPubkeys() error {
 	return err
 }
 
-func ParsePubkeys(m map[[32]byte]struct{}, keys []string) error {
-	var k [32]byte
-	var key []byte
+func ParsePubkeys(m map[signify.PublicKey]struct{}, keys []string) error {
 	for _, s := range keys {
-		var err error
-		key, err = ParseKey(key[:0], []byte(s))
-		if err != nil {
+		var key signify.PublicKey
+		if err := key.Parse(s); err != nil {
 			return err
 		}
-		copy(k[:], key[:32])
-		m[k] = struct{}{}
+		m[key] = struct{}{}
 	}
 	return nil
 }
 
 func PutEventHandler(c buffalo.Context) error {
 	signer := c.Param("NaCL-Signer")
-	pubKey, err := ParseKey(nil, []byte(signer))
-	if err != nil {
+	var pk signify.PublicKey
+	if err := pk.Parse(signer); err != nil {
 		return err
 	}
-	var pk [32]byte
-	copy(pk[:], pubKey[:32])
 
 	identitiesMu.Lock()
 	_, ok := identities[pk]
 	identitiesMu.Unlock()
 	if !ok {
-		return fmt.Errorf("unknown sender % x", pk)
+		return fmt.Errorf("unknown sender %s", pk)
 	}
 
 	body, err := ioutil.ReadAll(c.Request().Body)
 	if err != nil {
 		return fmt.Errorf("read body: %w", err)
 	}
-	if body, ok = Open(body[:0], body, pubKey); !ok {
+	if body, ok = signify.Open(make([]byte, 0, len(body)-64), body, pk); !ok {
 		return fmt.Errorf("signature mismatch")
 	}
 	db := c.Value("tx").(*pop.Connection)
